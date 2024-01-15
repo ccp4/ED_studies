@@ -3,6 +3,14 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+**/dat
+**/notebooks
+**/tests
+**/sandbox
+**/rocks
+pdb_structures/resources
+exp_structures
+
 # C extensions
 *.so
 
