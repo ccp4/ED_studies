@@ -2,6 +2,16 @@ from utils import*;imp.reload(dsp)
 import gemmi
 from EDutils import utilities as ut 
 
+def get_hkls(all_beams,N,h,index=False):
+    hkls = [hs.index[:N].values.tolist() for hs in all_beams]
+    _hkls=[]
+    for hs in hkls : 
+        if h not in hs: hs[-1]=h
+        if not index:
+            hs=np.array([eval(h) for h in hs])
+        _hkls.append(hs)
+    return _hkls
+    
 def get_uvw(u,npts=20,osc = 0.2):
     ez = [0,0,1]
     rot_axis = np.cross(ez,u)

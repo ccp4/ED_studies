@@ -8,6 +8,7 @@ __pycache__/
 **/tests
 **/sandbox
 **/rocks
+**/figs/*
 pdb_structures/resources
 exp_structures
 
