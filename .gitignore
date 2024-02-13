@@ -9,6 +9,7 @@ __pycache__/
 **/sandbox
 **/rocks
 **/figs/*
+**/paper_figs/*
 pdb_structures/resources
 exp_structures
 

@@ -1,8 +1,98 @@
 from utils import*;imp.reload(dsp)
 import gemmi
 from EDutils import utilities as ut 
+from blochwave import bloch_pp as bl ;imp.reload(bl)
 
-def get_hkls(all_beams,N,h,index=False):
+
+def annotate_beams(ax,_hkls,frames,I):
+    '''annotate the ax with beam changes at specific frames 
+   Parameters : 
+    ------------    
+    - ax : the axes 
+    - _hkls : list of beams for each frame
+    - frames : dict {frame : (sg_left,sg_right,ha)}
+    - I : Intensities 
+    '''
+    for f,(sx,sy,ha) in frames.items(): 
+        txt = get_beam_diff(_hkls,f,v=False);
+        x,y=f+1, I[f+1]
+        ax.annotate('%s' %txt, xy=(x,y), color='g',xytext=(x+sx*2,y+sy*0.05),ha=ha,
+                    arrowprops=dict(facecolor='g',edgecolor='none', shrink=0.05,width=2),
+                    )
+    
+def get_beam_diff(_hkls,i,v=True):
+    ''' returns the beam that changes from one frame to the other in the _hkls list
+    Parameters : 
+    ------------    
+    - _hkls : list of beams for each frame
+    - i     : frame index (starts at 0 )
+    '''
+    old,new=np.setdiff1d(_hkls[i],_hkls[i+1])[0],np.setdiff1d(_hkls[i+1],_hkls[i])[0]
+    msg='%s -> %s '  %(old,new)
+    if v:print(msg)
+    return msg
+    
+def refl_rocking_curve(h,u,osc,npts,Nbeams,Sargs,path,thicks=np.arange(100,10001,100),full=True):
+    '''Runs a series of rocking curve experiments for a an increasing number of beams
+    Parameters : 
+    ------------
+    - h reflection [h,k,l] or str
+    - osc,npts : oscillation range and number of points
+    - Nbeams : rocking curves with number of beams (list)
+    - Sargs : Arguments for Bloch solver object
+    - path : path to put the rocking curves
+    '''
+    if not type(h)==str:
+        h=str(tuple(h))
+    rock_path=lambda name:'%s/%s' %(path,name)
+    rock_file=lambda name:rock_path(name)+'/rock_.pkl'
+    h_name = h[1:-1].replace(', ','_')
+    
+    
+    ## The first rocking curve runs with the normal Smax paramater 
+    uvw=ut.get_uvw(u,osc=osc,npts=npts)
+    if full:
+        print('run full rocking curve')
+        rock_full = bl.Bloch_cont(path=rock_path(h_name),params=[],vals=[],uvw=uvw,tag='',Sargs=Sargs,
+                             frames=np.arange(len(uvw)) ,verbose=False)
+        rock_full.do('_set_beams_vs_thickness',verbose=False, thicks=thicks,v=False)
+    else:
+        rock_full = ut.load_pkl(rock_file(h_name))
+    ## then runs for increasing number of beams 
+    all_beams = [rock_full.load(i).df_G.sort_values('Swa')[['Sw','Uga','xi_g']] for i in range(rock_full.n_simus)]    
+    
+    for N in Nbeams : 
+        print('rocking N=%dx%d' %(N,N))
+        hkls = [hs.index[:N].values.tolist() for hs in all_beams]
+        _hkls=[]
+        for hs in hkls : 
+            if h not in hs: hs[-1]=h
+            _hkls.append(np.array([eval(h) for h in hs]))
+        
+        name = '%s_%dx%d' %(h_name,N,N)
+        r = bl.Bloch_cont(path=rock_path(name),params=['hkl'],vals=[_hkls],uvw=uvw,tag='',Sargs=Sargs,
+                         frames=np.arange(len(uvw)) ,verbose=False)
+        r.do('_set_beams_vs_thickness',verbose=False, thicks=thicks,v=False)
+    return h_name
+
+
+def get_hkls(h,path,N,index=False):
+    '''get the list of beams for each frame of the rocking curve
+    Parameters : 
+    ------------
+    - h reflection [h,k,l] or str
+    - path : path to put the rocking curves
+    - N : only keeps the closest N beams to the Ewald sphere (including h)
+    - index : returns the list a index entries if True 
+    '''
+    if not type(h)==str:
+        h=str(tuple(h))    
+    rock_path=lambda name:'%s/%s' %(path,name)
+    rock_file=lambda name:rock_path(name)+'/rock_.pkl'
+    h_name = h[1:-1].replace(', ','_')
+    rock_full = ut.load_pkl(rock_file(h_name))
+    
+    all_beams = [rock_full.load(i).df_G.sort_values('Swa')[['Sw','Uga','xi_g']] for i in range(rock_full.n_simus)]
     hkls = [hs.index[:N].values.tolist() for hs in all_beams]
     _hkls=[]
     for hs in hkls : 
