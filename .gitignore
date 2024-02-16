@@ -2,16 +2,18 @@
 __pycache__/
 *.py[cod]
 *$py.class
+*.refl
+*.expt
 
 **/dat
 **/notebooks
 **/tests
 **/sandbox
 **/rocks
-**/figs/*
-**/paper_figs/*
+**/felix
 pdb_structures/resources
-exp_structures
+#exp_structures
+Jan2024_workshop/
 
 # C extensions
 *.so
