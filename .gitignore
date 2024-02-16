@@ -6,6 +6,9 @@ __pycache__/
 *.expt
 
 **/dat
+**/back
+**/dials/*.txt
+**/dials/scan-varying_model/
 **/notebooks
 **/tests
 **/sandbox
