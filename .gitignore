@@ -21,6 +21,14 @@ pdb_structures/resources
 #exp_structures
 Jan2024_workshop/
 
+
+# Shelxl  
+*.res
+*.lst
+*.mat
+*.hkl
+*.fcf
+
 # C extensions
 *.so
 

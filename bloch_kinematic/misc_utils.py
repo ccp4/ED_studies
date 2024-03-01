@@ -1,8 +1,15 @@
 from utils import*;imp.reload(dsp)
 import gemmi
+from subprocess import check_output
 from EDutils import utilities as ut 
 from blochwave import bloch_pp as bl ;imp.reload(bl)
 
+def get_commit(ed_file):
+    '''ed_file : file path of one of the modules of the ED libraries'''
+    ed_path = os.path.dirname(os.path.realpath(ed_file+'/..'))
+    branch = check_output('cd {ed_path}; git branch | grep "*" '.format(ed_path=ed_path),shell=True).decode()
+    commit = check_output('cd {ed_path}; git log | head -n1'.format(ed_path=ed_path),shell=True).decode()
+    print('branch=%s, commit=%s ' %(branch.strip().split(' ')[-1],commit.strip().split(' ')[-1]))
 
 def annotate_beams(ax,_hkls,frames,I):
     '''annotate the ax with beam changes at specific frames 

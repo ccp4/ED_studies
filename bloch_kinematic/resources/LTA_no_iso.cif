@@ -208,10 +208,10 @@ loop_
  _atom_site_refinement_flags_occupancy
  _atom_site_disorder_assembly
  _atom_site_disorder_group
-Si01 Si 0.869227 0.683510 0.500000 0.008 Uani 1 2 d S T P . .
-O002 O 1.000000 0.718913 0.500000 0.024 Uani 1 4 d S T P . .
-O003 O 0.795698 0.795698 0.500000 0.017 Uani 1 4 d S T P . .
-O004 O 0.842538 0.610109 0.389891 0.026 Uani 1 2 d S T P . .
+Si01 Si 0.869227 0.683510 0.500000 0.00 Uani 1 2 d S T P . .
+O002 O 1.000000 0.718913 0.500000 0.0 Uani 1 4 d S T P . .
+O003 O 0.795698 0.795698 0.500000 0.0 Uani 1 4 d S T P . .
+O004 O 0.842538 0.610109 0.389891 0.0 Uani 1 2 d S T P . .
 
 loop_
  _atom_site_aniso_label
